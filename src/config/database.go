@@ -29,7 +29,7 @@ func ConnectDb(conStr string) (*sql.DB, error) {
 
 func GetDb() (*sql.DB, error) {
 	if db == nil {
-		return nil, sql.ErrConnDone
+		return nil, nil
 	}
 	return db, nil
 }
