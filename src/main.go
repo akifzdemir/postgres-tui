@@ -9,7 +9,7 @@ import (
 
 func main() {
 	model := models.InitialLoginModel()
-	p := tea.NewProgram(model, tea.WithAltScreen())
+	p := tea.NewProgram(model)
 	if _, err := p.Run(); err != nil {
 		log.Fatal(err)
 	}

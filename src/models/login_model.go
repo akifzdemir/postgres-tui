@@ -71,8 +71,9 @@ func (m LoginModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.focusIndex == len(m.inputs)-1 {
 				connStr := fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable",
 					m.inputs[2].Value(), m.inputs[3].Value(), m.inputs[0].Value(), m.inputs[1].Value())
+
 				dbModel := InitialDatabaseModel(connStr)
-				return dbModel.Update(msg)
+				return dbModel.Update(tea.KeyMsg{})
 			} else {
 				m.inputs[m.focusIndex].Blur()
 				m.focusIndex = (m.focusIndex + 1) % len(m.inputs)
