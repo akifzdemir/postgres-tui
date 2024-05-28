@@ -69,7 +69,7 @@ func (m DatabaseModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if ok {
 				selectedItem = i
 				config.RemoveDb()
-				tablesModel := InitialTablesModel(m.connStr, selectedItem.title)
+				tablesModel := InitialTableListModel(m.connStr, selectedItem.title)
 				return tablesModel.Update(tea.KeyMsg{})
 			}
 		}

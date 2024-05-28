@@ -5,27 +5,25 @@ import (
 	"fmt"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
-	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 	"go-psql/src/config"
 	"go-psql/src/constants"
 	"log"
 )
 
-type TablesModel struct {
-	dataTable table.Model
+type TableListModel struct {
 	tableList list.Model
 	item
 	db      *sql.DB
 	connStr string
 }
 
-func InitialTablesModel(connStr string, dbName string) TablesModel {
+func InitialTableListModel(connStr string, dbName string) TableListModel {
 
 	newConnStr := fmt.Sprintf("%s dbname=%s", connStr, dbName)
 	db, err := config.ConnectDb(newConnStr)
 	if err != nil {
-		log.Fatal("test-->", err)
+		log.Fatal(err)
 	}
 
 	query := fmt.Sprintf(`SELECT tablename 
@@ -54,14 +52,14 @@ func InitialTablesModel(connStr string, dbName string) TablesModel {
 			constants.Keymap.Back,
 		}
 	}
-	return TablesModel{db: db, tableList: tblist, connStr: connStr}
+	return TableListModel{db: db, tableList: tblist, connStr: connStr}
 }
 
-func (m TablesModel) Init() tea.Cmd {
+func (m TableListModel) Init() tea.Cmd {
 	return nil
 }
 
-func (m TablesModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m TableListModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.Type {
@@ -72,14 +70,21 @@ func (m TablesModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, constants.Keymap.Back):
 			dbListModel := InitialDatabaseModel(m.connStr)
 			return dbListModel.Update(tea.KeyMsg{})
+		case key.Matches(msg, constants.Keymap.Enter):
+			var selectedItem item
+			i, ok := m.tableList.SelectedItem().(item)
+			if ok {
+				selectedItem = i
+				tableRecordList := InitialTableRecordsModel(selectedItem.title, m.db, m)
+				return tableRecordList.Update(tea.KeyMsg{})
+			}
 		}
-
 	}
 	var cmd tea.Cmd
 	m.tableList, cmd = m.tableList.Update(msg)
 	return m, cmd
 }
 
-func (m TablesModel) View() string {
+func (m TableListModel) View() string {
 	return appStyle.Render(m.tableList.View())
 }

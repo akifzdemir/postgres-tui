@@ -9,12 +9,22 @@ type keymap struct {
 	Delete key.Binding
 	Back   key.Binding
 	Quit   key.Binding
+	Up     key.Binding
+	Down   key.Binding
 }
 
 var Keymap = keymap{
 	Create: key.NewBinding(
 		key.WithKeys("c"),
 		key.WithHelp("c", "create"),
+	),
+	Up: key.NewBinding(
+		key.WithKeys("up", "k"), // 'up' ve 'k' tuşları
+		key.WithHelp("↑/k", "move up"),
+	),
+	Down: key.NewBinding(
+		key.WithKeys("down", "j"), // 'down' ve 'j' tuşları
+		key.WithHelp("↓/j", "move down"),
 	),
 	Enter: key.NewBinding(
 		key.WithKeys("enter"),
@@ -29,8 +39,8 @@ var Keymap = keymap{
 		key.WithHelp("d", "delete"),
 	),
 	Back: key.NewBinding(
-		key.WithKeys("esc"),
-		key.WithHelp("esc", "back"),
+		key.WithKeys("backspace"),
+		key.WithHelp("backspace", "back"),
 	),
 	Quit: key.NewBinding(
 		key.WithKeys("ctrl+c", "q"),
