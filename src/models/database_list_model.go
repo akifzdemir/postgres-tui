@@ -49,7 +49,7 @@ func InitialDatabaseModel(connStr string) DatabaseModel {
 	dbList.Title = "Databases"
 	dbList.AdditionalShortHelpKeys = func() []key.Binding {
 		return []key.Binding{
-			constants.Keymap.Enter,
+			constants.GeneralKeys.Enter,
 		}
 	}
 	return DatabaseModel{db: db, dbList: dbList, connStr: connStr}
@@ -63,7 +63,7 @@ func (m DatabaseModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
-		case key.Matches(msg, constants.Keymap.Enter):
+		case key.Matches(msg, constants.GeneralKeys.Enter):
 			var selectedItem item
 			i, ok := m.dbList.SelectedItem().(item)
 			if ok {

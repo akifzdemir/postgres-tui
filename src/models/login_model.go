@@ -21,7 +21,7 @@ const (
 )
 
 var (
-	inputStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("160"))
+	inputStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("57"))
 )
 
 func InitialLoginModel() LoginModel {

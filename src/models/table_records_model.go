@@ -3,19 +3,21 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"go-psql/src/constants"
 	"log"
-	"strings"
 )
 
 type TableRecordsModel struct {
 	dataTable table.Model
 	db        *sql.DB
+	help      help.Model
 	tableList TableListModel
+	columns   []table.Column
 }
 
 func InitialTableRecordsModel(tableName string, db *sql.DB, tableList TableListModel) TableRecordsModel {
@@ -79,7 +81,8 @@ func InitialTableRecordsModel(tableName string, db *sql.DB, tableList TableListM
 		Background(lipgloss.Color("57"))
 
 	dTable.SetStyles(s)
-	return TableRecordsModel{dataTable: dTable, db: db, tableList: tableList}
+	help := help.New()
+	return TableRecordsModel{dataTable: dTable, db: db, tableList: tableList, help: help, columns: tableColumns}
 }
 
 func (m TableRecordsModel) Init() tea.Cmd {
@@ -90,15 +93,17 @@ func (m TableRecordsModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
-		case key.Matches(msg, constants.Keymap.Enter):
-		case key.Matches(msg, constants.Keymap.Up):
+		case key.Matches(msg, constants.GeneralKeys.Enter):
+		case key.Matches(msg, constants.GeneralKeys.Up):
 			m.dataTable.SetCursor(m.dataTable.Cursor() - 1)
-		case key.Matches(msg, constants.Keymap.Down):
+		case key.Matches(msg, constants.GeneralKeys.Down):
 			m.dataTable.SetCursor(m.dataTable.Cursor() + 1)
-		case key.Matches(msg, constants.Keymap.Back):
+		case key.Matches(msg, constants.GeneralKeys.Back):
 			return m.tableList.Update(tea.KeyMsg{})
+		case key.Matches(msg, constants.TableKeys.Create):
+		case key.Matches(msg, constants.TableKeys.Delete):
 
-		case key.Matches(msg, constants.Keymap.Quit):
+		case key.Matches(msg, constants.GeneralKeys.Quit):
 			return m, tea.Quit
 
 		}
@@ -110,20 +115,12 @@ func (m TableRecordsModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m TableRecordsModel) View() string {
-	builder := strings.Builder{}
-
-	builder.WriteString(appStyle.Render(m.dataTable.View()) + "\n")
-	builder.WriteString(m.renderHelp())
-
-	return builder.String()
-}
-
-func (m TableRecordsModel) renderHelp() string {
-	helpView := ""
-	helpView += constants.Keymap.Up.Help().Desc + " " + constants.Keymap.Up.Help().Key + " | "
-	helpView += constants.Keymap.Down.Help().Desc + " " + constants.Keymap.Down.Help().Key + " | "
-	helpView += constants.Keymap.Enter.Help().Desc + " " + constants.Keymap.Enter.Help().Key + " | "
-	helpView += constants.Keymap.Quit.Help().Desc + " " + constants.Keymap.Quit.Help().Key
-
-	return lipgloss.NewStyle().Padding(1, 2).Foreground(darkGray).Render(helpView)
+	helpView := m.help.View(constants.TableKeys)
+	return lipgloss.
+		JoinVertical(
+			lipgloss.
+				Left, lipgloss.
+				NewStyle().
+				Padding(1, 2).
+				Render(m.dataTable.View()), helpView)
 }

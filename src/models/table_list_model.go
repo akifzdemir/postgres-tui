@@ -48,8 +48,8 @@ func InitialTableListModel(connStr string, dbName string) TableListModel {
 	tblist.Title = "Tables"
 	tblist.AdditionalShortHelpKeys = func() []key.Binding {
 		return []key.Binding{
-			constants.Keymap.Enter,
-			constants.Keymap.Back,
+			constants.GeneralKeys.Enter,
+			constants.GeneralKeys.Back,
 		}
 	}
 	return TableListModel{db: db, tableList: tblist, connStr: connStr}
@@ -67,10 +67,10 @@ func (m TableListModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 		switch {
-		case key.Matches(msg, constants.Keymap.Back):
+		case key.Matches(msg, constants.GeneralKeys.Back):
 			dbListModel := InitialDatabaseModel(m.connStr)
 			return dbListModel.Update(tea.KeyMsg{})
-		case key.Matches(msg, constants.Keymap.Enter):
+		case key.Matches(msg, constants.GeneralKeys.Enter):
 			var selectedItem item
 			i, ok := m.tableList.SelectedItem().(item)
 			if ok {
