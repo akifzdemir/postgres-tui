@@ -73,11 +73,9 @@ func InitialTableRecordsModel(tableName string, db *sql.DB, tableList TableListM
 	s := table.DefaultStyles()
 	s.Header = s.Header.
 		BorderStyle(lipgloss.NormalBorder()).
-		BorderForeground(lipgloss.Color("240")).
 		BorderBottom(true)
 
 	s.Selected = s.Selected.
-		Foreground(lipgloss.Color("229")).
 		Background(lipgloss.Color("57"))
 
 	dTable.SetStyles(s)

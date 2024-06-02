@@ -2,27 +2,18 @@ package models
 
 import (
 	"fmt"
+	"github.com/charmbracelet/lipgloss"
+	"go-psql/src/constants"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 )
 
 type LoginModel struct {
 	inputs     []textinput.Model
 	focusIndex int
 }
-
-const (
-	hotPink  = lipgloss.Color("#FF06B7")
-	darkGray = lipgloss.Color("#767676")
-	red      = lipgloss.Color("160")
-)
-
-var (
-	inputStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("57"))
-)
 
 func InitialLoginModel() LoginModel {
 	m := LoginModel{
@@ -95,28 +86,42 @@ func (m LoginModel) updateinputs(msg tea.Msg) tea.Cmd {
 }
 
 func (m LoginModel) View() string {
-	builder := strings.Builder{}
+	header := lipgloss.
+		NewStyle().
+		SetString("PostgreSQL TUI").
+		Align(lipgloss.Center).
+		Width(20).
+		PaddingBottom(2).
+		Foreground(constants.BlueViolet).String()
+
+	var views []string
+	views = append(views, header)
+
 	for i := range m.inputs {
-		builder.WriteString(lipgloss.NewStyle().
-			Border(lipgloss.ThickBorder()).
-			Width(30).
-			Render(m.getInputName(i)+m.inputs[i].View()) + "\n")
+		inputView := lipgloss.JoinVertical(
+			lipgloss.Left,
+			m.getInputName(i),
+			m.inputs[i].View(),
+		)
+		views = append(views, inputView)
 	}
-	view := builder.String()
-	return view
+
+	finalView := lipgloss.JoinVertical(lipgloss.Center, views...)
+
+	return constants.BorderStyle.Render(finalView)
 }
 
 func (m LoginModel) getInputName(i int) string {
 	builder := strings.Builder{}
 	switch i {
 	case 0:
-		builder.WriteString(inputStyle.Width(10).Render("Host name: "))
+		builder.WriteString(constants.InputStyle.Render("Host name: "))
 	case 1:
-		builder.WriteString(inputStyle.Width(10).Render("Port: "))
+		builder.WriteString(constants.InputStyle.Render("Port: "))
 	case 2:
-		builder.WriteString(inputStyle.Width(10).Render("Username: "))
+		builder.WriteString(constants.InputStyle.Render("Username: "))
 	case 3:
-		builder.WriteString(inputStyle.Width(10).Render("Password: "))
+		builder.WriteString(constants.InputStyle.Render("Password: "))
 	}
 	return builder.String()
 }
