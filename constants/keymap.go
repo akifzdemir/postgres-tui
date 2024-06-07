@@ -15,6 +15,8 @@ type TableKeyMap struct {
 	Create key.Binding
 	Delete key.Binding
 	Rename key.Binding
+	Yes    key.Binding
+	No     key.Binding
 }
 
 type LoginKeyMap struct {
@@ -60,6 +62,13 @@ var TableKeys = TableKeyMap{
 		key.WithKeys("d"),
 		key.WithHelp("d", "delete"),
 	),
+	Yes: key.NewBinding(
+		key.WithKeys("y"),
+		key.WithHelp("y", "Yes"),
+	),
+	No: key.NewBinding(
+		key.WithKeys("n"),
+		key.WithHelp("n", "No")),
 }
 
 var LoginKeys = LoginKeyMap{

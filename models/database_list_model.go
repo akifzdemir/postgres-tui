@@ -72,11 +72,8 @@ func (m DatabaseModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				tablesModel := InitialTableListModel(m.connStr, selectedItem.title)
 				return tablesModel.Update(tea.KeyMsg{})
 			}
-		}
-		switch msg.Type {
-		case tea.KeyCtrlC:
+		case key.Matches(msg, constants.GeneralKeys.Quit):
 			return m, tea.Quit
-
 		}
 
 	}
