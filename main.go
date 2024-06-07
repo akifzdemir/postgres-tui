@@ -1,10 +1,10 @@
 package main
 
 import (
+	"go-psql/models"
 	"log"
 
 	"github.com/charmbracelet/bubbletea"
-	"go-psql/src/models"
 )
 
 func main() {

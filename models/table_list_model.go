@@ -6,8 +6,8 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
-	"go-psql/src/config"
-	"go-psql/src/constants"
+	"go-psql/config"
+	"go-psql/constants"
 	"log"
 )
 

@@ -8,8 +8,9 @@ import (
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"go-psql/src/constants"
+	constants2 "go-psql/constants"
 	"log"
+	"strings"
 )
 
 type TableRecordsModel struct {
@@ -18,6 +19,7 @@ type TableRecordsModel struct {
 	help      help.Model
 	tableList TableListModel
 	columns   []table.Column
+	tableName string
 }
 
 func InitialTableRecordsModel(tableName string, db *sql.DB, tableList TableListModel) TableRecordsModel {
@@ -76,11 +78,19 @@ func InitialTableRecordsModel(tableName string, db *sql.DB, tableList TableListM
 		BorderBottom(true)
 
 	s.Selected = s.Selected.
-		Background(lipgloss.Color("57"))
+		Background(constants2.BlueViolet).
+		Foreground(constants2.White)
 
 	dTable.SetStyles(s)
 	help := help.New()
-	return TableRecordsModel{dataTable: dTable, db: db, tableList: tableList, help: help, columns: tableColumns}
+	return TableRecordsModel{
+		dataTable: dTable,
+		db:        db,
+		tableList: tableList,
+		help:      help,
+		columns:   tableColumns,
+		tableName: tableName,
+	}
 }
 
 func (m TableRecordsModel) Init() tea.Cmd {
@@ -91,17 +101,16 @@ func (m TableRecordsModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
-		case key.Matches(msg, constants.GeneralKeys.Enter):
-		case key.Matches(msg, constants.GeneralKeys.Up):
+		case key.Matches(msg, constants2.GeneralKeys.Enter):
+		case key.Matches(msg, constants2.GeneralKeys.Up):
 			m.dataTable.SetCursor(m.dataTable.Cursor() - 1)
-		case key.Matches(msg, constants.GeneralKeys.Down):
+		case key.Matches(msg, constants2.GeneralKeys.Down):
 			m.dataTable.SetCursor(m.dataTable.Cursor() + 1)
-		case key.Matches(msg, constants.GeneralKeys.Back):
+		case key.Matches(msg, constants2.GeneralKeys.Back):
 			return m.tableList.Update(tea.KeyMsg{})
-		case key.Matches(msg, constants.TableKeys.Create):
-		case key.Matches(msg, constants.TableKeys.Delete):
-
-		case key.Matches(msg, constants.GeneralKeys.Quit):
+		case key.Matches(msg, constants2.TableKeys.Delete):
+			return m.deleteRecord(m.dataTable.SelectedRow()), nil
+		case key.Matches(msg, constants2.GeneralKeys.Quit):
 			return m, tea.Quit
 
 		}
@@ -113,7 +122,7 @@ func (m TableRecordsModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m TableRecordsModel) View() string {
-	helpView := m.help.View(constants.TableKeys)
+	helpView := m.help.View(constants2.TableKeys)
 	return lipgloss.
 		JoinVertical(
 			lipgloss.
@@ -121,4 +130,27 @@ func (m TableRecordsModel) View() string {
 				NewStyle().
 				Padding(1, 2).
 				Render(m.dataTable.View()), helpView)
+}
+
+func (m TableRecordsModel) deleteRecord(row table.Row) tea.Model {
+	var whereClause strings.Builder
+	for i, column := range m.columns {
+		if row[i] != "<nil>" {
+			whereClause.WriteString(fmt.Sprintf("%s = '%s'", column.Title, row[i]))
+			if i < len(m.columns)-1 {
+				whereClause.WriteString(" AND ")
+			}
+		}
+
+	}
+	query := fmt.Sprintf("DELETE FROM %s WHERE %s", m.tableName, whereClause.String())
+	_, err := m.db.Exec(query)
+	if err != nil {
+		log.Println(err)
+	}
+	return m.refreshTable()
+}
+
+func (m TableRecordsModel) refreshTable() tea.Model {
+	return InitialTableRecordsModel(m.tableName, m.db, m.tableList)
 }

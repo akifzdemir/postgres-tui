@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/lipgloss"
-	"go-psql/src/constants"
+	constants2 "go-psql/constants"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/textinput"
@@ -99,7 +99,7 @@ func (m LoginModel) View() string {
 		Align(lipgloss.Center).
 		Width(20).
 		PaddingBottom(2).
-		Foreground(constants.BlueViolet).String()
+		Foreground(constants2.BlueViolet).String()
 
 	var views []string
 	views = append(views, header)
@@ -112,24 +112,24 @@ func (m LoginModel) View() string {
 		)
 		views = append(views, inputView)
 	}
-	helpView := m.help.View(constants.LoginKeys)
+	helpView := m.help.View(constants2.LoginKeys)
 	views = append(views, helpView)
 	finalView := lipgloss.JoinVertical(lipgloss.Center, views...)
 
-	return constants.BorderStyle.Render(finalView)
+	return constants2.BorderStyle.Render(finalView)
 }
 
 func (m LoginModel) getInputName(i int) string {
 	builder := strings.Builder{}
 	switch i {
 	case 0:
-		builder.WriteString(constants.InputStyle.Render("Host name: "))
+		builder.WriteString(constants2.InputStyle.Render("Host name: "))
 	case 1:
-		builder.WriteString(constants.InputStyle.Render("Port: "))
+		builder.WriteString(constants2.InputStyle.Render("Port: "))
 	case 2:
-		builder.WriteString(constants.InputStyle.Render("Username: "))
+		builder.WriteString(constants2.InputStyle.Render("Username: "))
 	case 3:
-		builder.WriteString(constants.InputStyle.Render("Password: "))
+		builder.WriteString(constants2.InputStyle.Render("Password: "))
 	}
 	return builder.String()
 }

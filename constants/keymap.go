@@ -71,7 +71,7 @@ var LoginKeys = LoginKeyMap{
 }
 
 func (k GeneralKeyMap) ShortHelp() []key.Binding {
-	return []key.Binding{k.Up, k.Down, k.Enter, k.Quit, k.Back}
+	return []key.Binding{k.Up, k.Down, k.Quit}
 }
 
 func (k GeneralKeyMap) FullHelp() [][]key.Binding {
@@ -81,11 +81,11 @@ func (k GeneralKeyMap) FullHelp() [][]key.Binding {
 }
 
 func (k TableKeyMap) ShortHelp() []key.Binding {
-	return append(k.GeneralKeyMap.ShortHelp(), k.Create, k.Delete, k.Up)
+	return append(k.GeneralKeyMap.ShortHelp(), k.Delete, k.Back)
 }
 
 func (k TableKeyMap) FullHelp() [][]key.Binding {
-	return append(k.GeneralKeyMap.FullHelp(), []key.Binding{k.Create, k.Delete, k.Rename})
+	return append(k.GeneralKeyMap.FullHelp(), []key.Binding{k.Delete, k.Back})
 }
 
 func (k LoginKeyMap) ShortHelp() []key.Binding {
