@@ -24,12 +24,12 @@ type LoginKeyMap struct {
 
 var GeneralKeys = GeneralKeyMap{
 	Up: key.NewBinding(
-		key.WithKeys("up", "k"),
-		key.WithHelp("↑/k", "move up"),
+		key.WithKeys("up"),
+		key.WithHelp("↑", "move up"),
 	),
 	Down: key.NewBinding(
-		key.WithKeys("down", "j"),
-		key.WithHelp("↓/j", "move down"),
+		key.WithKeys("down"),
+		key.WithHelp("↓", "move down"),
 	),
 	Enter: key.NewBinding(
 		key.WithKeys("enter"),
@@ -89,5 +89,7 @@ func (k TableKeyMap) FullHelp() [][]key.Binding {
 }
 
 func (k LoginKeyMap) ShortHelp() []key.Binding {
-	return append(k.GeneralKeyMap.ShortHelp(), k.Submit, k.Up, k.Down)
+	return []key.Binding{
+		k.Submit, k.Up, k.Down,
+	}
 }

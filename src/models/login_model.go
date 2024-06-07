@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/lipgloss"
 	"go-psql/src/constants"
 	"strings"
@@ -13,15 +14,13 @@ import (
 type LoginModel struct {
 	inputs     []textinput.Model
 	focusIndex int
+	help       help.Model
 }
 
 func InitialLoginModel() LoginModel {
-	m := LoginModel{
-		inputs:     make([]textinput.Model, 4),
-		focusIndex: 0,
-	}
+	inputs := make([]textinput.Model, 4)
 	var t textinput.Model
-	for i := range m.inputs {
+	for i := range inputs {
 		t = textinput.New()
 		switch i {
 		case 0:
@@ -34,7 +33,15 @@ func InitialLoginModel() LoginModel {
 		case 3:
 			t.Placeholder = "1234"
 		}
-		m.inputs[i] = t
+		inputs[i] = t
+	}
+
+	helpModel := help.New()
+
+	m := LoginModel{
+		inputs:     inputs,
+		focusIndex: 0,
+		help:       helpModel,
 	}
 	return m
 }
@@ -105,7 +112,8 @@ func (m LoginModel) View() string {
 		)
 		views = append(views, inputView)
 	}
-
+	helpView := m.help.View(constants.LoginKeys)
+	views = append(views, helpView)
 	finalView := lipgloss.JoinVertical(lipgloss.Center, views...)
 
 	return constants.BorderStyle.Render(finalView)
