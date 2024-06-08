@@ -91,6 +91,7 @@ func InitialTableRecordsModel(tableName string, db *sql.DB, tableList TableListM
 		Foreground(constants.White)
 
 	dTable.SetStyles(s)
+	dTable.SetHeight(15)
 	help := help.New()
 	return TableRecordsModel{
 		dataTable: dTable,
@@ -156,7 +157,7 @@ func (m TableRecordsModel) View() string {
 	return lipgloss.
 		JoinVertical(
 			lipgloss.Left,
-			lipgloss.NewStyle().Padding(1, 2).Render(m.dataTable.View()),
+			lipgloss.NewStyle().PaddingTop(2).Render("\n", m.dataTable.View()),
 			helpView,
 			confirmationMessage,
 			errorMessage,
